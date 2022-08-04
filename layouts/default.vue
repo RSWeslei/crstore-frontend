@@ -67,17 +67,27 @@
           class="text-right"
       >
         <div class="my-1">
-          <v-btn
-            color="#31CED9"
-            fab
-            to="/users/signup"
-          >
-            <v-icon size="300%">mdi-account-circle</v-icon>
-          </v-btn>
+          <v-row>
+            <v-col style="padding-left: 85%;">
+              <v-btn
+                fab
+                to="/items/checkcart"
+              >
+                <v-icon size="300%">mdi-car</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col>
+              <v-btn
+                fab
+                to="/users/signup"
+              >
+                <v-icon size="300%">mdi-account-circle</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
         </div>
-
       </div>
-        <Nuxt/>
+      <Nuxt/>
     </v-main>
   </v-app>
 </template>

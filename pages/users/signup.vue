@@ -99,6 +99,7 @@
                 clearable
                 label="CPF"
                 type="text"
+                v-mask="['###.###.###-##']"
               >
                 <template v-slot:append>
                   <img
@@ -163,13 +164,6 @@ export default {
         }
       } catch (error) {
         return this.$toast.error(`${error.message}`);
-      }
-    },
-    checkPassword () {
-      try {
-        console.log("opaaaaa");
-      } catch (error) {
-        
       }
     }
   }
