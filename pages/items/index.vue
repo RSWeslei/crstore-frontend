@@ -23,7 +23,7 @@
 
           </v-col>
           <v-img
-            :src="'https://picsum.photos/200/' + item.id + '00'"
+            :src="item.image"
             width="150px"
             height="150px"
             class="rounded-lg"
@@ -74,8 +74,9 @@
           <v-row>
             <v-col align="center">
               <v-text-field
-                value="0"
-                style="width: 70%;"
+                :value="item.selectQtd"
+                v-model="item.selectQtd"
+                style="width: 60%;"
                 solo
                 dense
                 type="number"       
@@ -83,11 +84,12 @@
             </v-col>
             <v-col>
               <v-btn
-                style="width: 70%;"
+                style="width: 80%;"
                 color="green"
                 dense
-                solo        
-              >Comprar</v-btn>
+                solo
+                @click="addToCart(item)"   
+              >Add to cart</v-btn>
             </v-col>
           </v-row>
         </v-card>
@@ -113,7 +115,8 @@ export default {
           image: null,
           description: null,
           stock: null,
-          category: null
+          category: null,
+          selectQtd: 0
         }
       ]
     }
@@ -123,9 +126,30 @@ export default {
       try {
         let response = await this.$api.$get(`/items`)
         this.items = response.data
-        console.log(JSON.stringify(this.items));
+        this.items.forEach(item => {
+          item.selectQtd = 0
+        })
       } catch (error) {
-        
+        this.$toast.error(`Erro ao buscar produtos`);
+      }
+    },
+    async addToCart (item) {
+      try {
+        if (item.selectQtd <= 0){
+          return this.$toast.error(`Quantidade invalida!`);
+        }
+        let response = await this.$api.$post('/users/persistCart', {
+          itemId: item.id,
+          quantity: Number(item.selectQtd)
+        })
+        if (response.type == 'sucess') {
+          return this.$toast.success(`${response.message}`);
+        }
+        else if (response.type == 'error') {
+          return this.$toast.error(`${response.message}`);
+        }
+      } catch (error) {
+        this.$toast.error(`Erro ao adicionar ao carinho!`);
       }
     }
   }

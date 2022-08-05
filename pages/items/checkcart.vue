@@ -6,8 +6,8 @@
     >
       <v-col>
         <v-row 
-          v-for="item in items"
-          :key="item.id"
+          v-for="(item) in cartItems"
+          :key="item.itemId"
           style="margin: 10px;"
         >
           <v-card class="flex">
@@ -21,29 +21,26 @@
                   ></v-img>
                 </v-col>
                 <v-col>
-                  <v-card-text>{{item.name}}</v-card-text>
+                  
                 </v-col>
                 <v-col>
                   <v-container>
-                    <v-row align="center" style="background-color: red;">
-                      <v-col>
-                        <v-btn 
-                          fab
-                          small
-                        >+</v-btn>
-                      </v-col>
+                    <v-row align="center">
                       <v-col>
                         <v-text-field
+                          :value="item.quantity"
+                          v-model="item.quantity"
                           type="number"
                           solo
                           style="width: 80px; padding-top: 30px;"
                         ></v-text-field>
-                      </v-col>
-                      <v-col>
-                        <v-btn 
-                          fab
+                        <v-btn
+                          color="red"
                           small
-                        >-</v-btn>
+                          @click="deleteItem(item.itemId)"
+                        >
+                          Deletar
+                        </v-btn>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -64,13 +61,34 @@ export default {
   },
   data () {
     return {
-      items: []
+      cartItems: [],
     }
   },
   methods: {
     async getItems () {
-      let response = await this.$api.$get('/items')
-      this.items = response.data
+      let response = await this.$api.$get('/users/cartItems')
+      this.cartItems = response.data
+      console.log(JSON.stringify(this.cartItems));
+      if (response.type == 'error') {
+        return this.$toast.error(`${response.message}`);
+      }
+      this.cartItems.forEach(item => {
+        
+      })
+    },
+    async deleteItem (id) {
+      try {
+        if (!confirm('Deseja deletar o item?')){
+          return
+        }
+        let response = await this.$api.$post('/users/persistCart', {
+          id: id
+        })
+        this.$toast.success(`Produto removido com sucesso!`);
+        this.getItems()
+      } catch (error) {
+        this.$toast.error(`Erro ao remover o produto!`);
+      }
     }
   }
 }

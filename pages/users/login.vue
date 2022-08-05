@@ -91,6 +91,8 @@ export default {
         console.log(JSON.stringify(this.user));
         let response = await this.$axios.$post(`http://localhost:3333/users/login`, this.user)
         if (response.type == 'success'){
+          localStorage.removeItem('crstore-api-token')
+          localStorage.setItem('crstore-api-token', response.token)
           this.$toast.success(`Login feito com sucesso!`);
           return this.$router.push('/');
         }
