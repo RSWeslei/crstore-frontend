@@ -1,20 +1,20 @@
 <template>
-  <v-app
+  <v-app class="font"
     fluid
-    style="background-color: #181B24;"
+    
   >
-    <v-navigation-drawer
-      absolute
-      permanent
-      style="background-color: #242635; width: 15%; height: 100%"
+    <v-navigation-drawer 
+      v-model="drawer"
+      app
+      fixed
+      style="background-color: #12395d;"
     >
       <template v-slot:prepend>
           <v-list-item
             to="/"
             class="flex"
             style="padding-top: 10%;
-              padding-left: 10%;
-            "
+              padding-left: 10%;"
           >
           <v-list-item-avatar>
             <img src="../assets/icons/main-icon.jpeg">
@@ -51,7 +51,6 @@
             <v-list-item-icon>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-item-icon>
-
             <v-list-item-content>
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item-content>
@@ -59,34 +58,29 @@
         </v-list>
       </template>
     </v-navigation-drawer>
-    <v-main app style="width: 100%;">
-      <div 
-        style="width: 100%;
-          padding-top: 15px;
-          padding-right: 15px;"
-          class="text-right"
+    <v-app-bar 
+      app
+      fixed
+      color="#12395d"
+    >
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-spacer></v-spacer>
+      <v-btn icon
+        fab
+        to="/items/checkcart"
       >
-        <div class="my-1">
-          <v-row>
-            <v-col style="padding-left: 85%;">
-              <v-btn
-                fab
-                to="/items/checkcart"
-              >
-                <v-icon size="300%">mdi-car</v-icon>
-              </v-btn>
-            </v-col>
-            <v-col>
-              <v-btn
-                fab
-                to="/users/signup"
-              >
-                <v-icon size="300%">mdi-account-circle</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
-        </div>
-      </div>
+        <v-icon>mdi-cart</v-icon>
+      </v-btn>
+      <v-btn text
+        fab
+        to="/users/login"
+      >Login</v-btn>
+      <v-btn text
+        fab
+        to="/users/signup"
+      >Signup</v-btn>
+    </v-app-bar>
+    <v-main>
       <Nuxt/>
     </v-main>
   </v-app>
@@ -104,6 +98,7 @@
           },
           { title: 'About', icon: 'mdi-forum' },
         ],
+        drawer: false,
       }
     },
     methods: {
@@ -113,5 +108,12 @@
 </script> 
 
 <style>
-
+  @import url('https://fonts.googleapis.com/css2?family=Mouse+Memoirs&display=swap');
+  .font {
+    font-family: 'Mouse Memoirs', sans-serif;
+  }
+  .primary-color {
+    color: #242635;
+  }
+  
 </style>

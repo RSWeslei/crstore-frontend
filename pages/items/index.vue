@@ -1,101 +1,82 @@
 <template>
-  <div
-    style="padding-left: 15%;"
-  >
-    <v-container>
+  <v-app>
+    <v-container fluid class="font">
       <v-row
-        style="margin-left: 10px;"
+        dense
       >
         <v-card
           v-for="(item) in items"
           :key="item.id"
-          color="#242635"
+          color="#12395d"
           style="margin: 10px;"
-          width="250px"
+          width="300px"
           height="500px" 
         >
           <v-col align="center">
-            <p 
-              style="
-                font-size: 20px;
-              "
-            >{{item.name}}</p>
-
+            <v-card-text 
+              style="font-size: 20px;"
+            >{{item.name}}</v-card-text>
           </v-col>
-          <v-img
-            :src="item.image"
-            width="150px"
-            height="150px"
-            class="rounded-lg"
-            style="margin-left: 20%;"
-          ></v-img>
-          <div
-            style="padding-left: 20px;
-            padding-top: 10px;"
-          >
+          <v-col align="center">
+            <v-img
+              :src="item.image"
+              width="150px"
+              height="150px"
+              class="rounded-lg"
+            ></v-img>
+          </v-col>
+          <v-col>
+            <v-card-text 
+              style="font-size: 16px;"
+            >
+              {{item.description}}
+            </v-card-text>
+          </v-col>
+          <v-container class="flex">
             <v-row>
-              <v-card-text 
-                class="font" 
-                style="font-size: 16px;"
-              >
-                {{item.description}}
-              </v-card-text>
-            </v-row>
-            <v-row>
-              <v-col align="right">
-                <p
-                  style="font-size: 20px;
+              <v-col align="left">
+                <v-card-text
+                  style="font-size: 20px; 
                   color: green"
                 >
                   R$ {{item.price}}
-                </p>
+                </v-card-text>
               </v-col>
-              <v-col align="left">
-                <p
+              <v-col align="right">
+                <v-card-text
                   class="font"
                   style="font-size: 20px;
                   color: green"
                 >
                   {{item.stock}} {{ item.stock > 0 ? 'Disponível' : 'Indisponível'}}
-                </p>
+                </v-card-text>
               </v-col>
             </v-row>
-          </div>
-          <v-col align="center">
-            <v-select
-              :items="item.flavors"
-              item-color="green"
-              label="Sabor"
-              dense
-              solo
-              style="width: 80%;"
-            ></v-select>
-          </v-col>
-          <v-row>
-            <v-col align="center">
-              <v-text-field
-                :value="item.selectQtd"
-                v-model="item.selectQtd"
-                style="width: 60%;"
-                solo
-                dense
-                type="number"       
-              >c</v-text-field>
-            </v-col>
-            <v-col>
-              <v-btn
-                style="width: 80%;"
-                color="green"
-                dense
-                solo
-                @click="addToCart(item)"   
-              >Add to cart</v-btn>
-            </v-col>
-          </v-row>
+          </v-container>
+          <v-container class="flex">
+            <v-row>
+              <v-col align="center">
+                <v-text-field
+                  v-model="item.selectQtd"
+                  solo
+                  dense
+                  type="number"       
+                >c</v-text-field>
+              </v-col>
+              <v-col align="right">
+                <v-btn
+                  color="green"
+                  dense
+                  solo
+                  @click="addToCart(item)"   
+                >Add to cart</v-btn>
+              </v-col>
+            </v-row>
+          </v-container>
         </v-card>
       </v-row>
     </v-container>
-  </div>
+  </v-app>
 </template>
 
 <script>
@@ -105,20 +86,7 @@ export default {
   },
   data () {
     return{
-      items: 
-      [
-        {
-          id: null,
-          name: null,
-          price: null,
-          flavors: [],
-          image: null,
-          description: null,
-          stock: null,
-          category: null,
-          selectQtd: 0
-        }
-      ]
+      items: [ { selectQtd: 0 } ]
     }
   },
   methods: {
@@ -140,7 +108,9 @@ export default {
         }
         let response = await this.$api.$post('/users/persistCart', {
           itemId: item.id,
-          quantity: Number(item.selectQtd)
+          quantity: Number(item.selectQtd),
+          image: item.image,
+          name: item.name
         })
         if (response.type == 'sucess') {
           return this.$toast.success(`${response.message}`);
@@ -157,8 +127,5 @@ export default {
 </script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Mouse+Memoirs&display=swap');
-  .font {
-    font-family: 'Mouse Memoirs', sans-serif;
-  }
+
 </style>

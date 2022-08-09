@@ -1,5 +1,5 @@
 <template>
-  <div
+  <v-app
     style="padding-left: 35%;"
   >
     <v-card
@@ -126,7 +126,7 @@
         </v-container>
       </v-form>
     </v-card>
-  </div>
+  </v-app>
 </template>
 
 <script>
