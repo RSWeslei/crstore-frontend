@@ -36,6 +36,7 @@
                             v-model="item.savedQtd"
                             type="number"
                             solo
+                            style="width: 100px"  
                           ></v-text-field>
                           <v-btn
                             color="red"
@@ -44,9 +45,6 @@
                           >
                             Deletar
                           </v-btn>
-                        </v-col>
-                        <v-col>
-                        </v-col>
                           <v-btn
                             v-if="item.quantity != item.savedQtd"
                             color="blue"
@@ -55,6 +53,7 @@
                           >
                             Atualizar
                           </v-btn>
+                        </v-col>
                       </v-row>
                     </v-container>
                   </v-col>
@@ -122,9 +121,9 @@ export default {
   },
   methods: {
     async getItems () {
-      let items = await this.$api.$get('/users/cartItems')
+      let items = await this.$api.get('/users/cartItems')
       for (const item of items.data) {
-        let itemPrice = await this.$api.$get(`/items/price/${item.itemId}`)
+        let itemPrice = await this.$api.get(`/items/price/${item.itemId}`)
         item.price = itemPrice.data
         item.savedQtd = item.quantity
       }
@@ -140,7 +139,7 @@ export default {
         if (!confirm('Deseja deletar o item?')){
           return
         }
-        let response = await this.$api.$post('/users/persistCart', {
+        await this.$api.post('/users/persistCart', {
           id: id
         })
         this.$toast.success(`Produto removido com sucesso!`);
@@ -160,7 +159,12 @@ export default {
           item.savedQtd = item.quantity
           return this.$toast.error(`Quantidade invalida!`);
         }
-        let response = await this.$api.$post('/users/persistCart', {
+        let itemDb = await this.$api.get(`/items/${item.itemId}`)
+        if (itemDb && itemDb.data.stock < item.savedQtd){
+          item.savedQtd = item.quantity
+          return this.$toast.error(`Quantidade indisponivel!`);
+        }
+        await this.$api.post('/users/persistCart', {
           itemId: item.itemId,
           quantity: Number(item.quantity),
           image: item.image,

@@ -1,70 +1,63 @@
 <template>
-  <v-app
-    style="padding-left: 35%;"
-  >
-    <v-card
-      width="60%"
-      height="300px"
-    >
-      <v-form v-model="valid"> 
-        <v-container>
-          <v-row>
-            <v-col cols="12">
-              <v-text-field
-                v-model="user.username"
-                outlined
-                clearable
-                label="Username"
-                type="text"
-                :rules="[rules.required]"
-                required
-              >
-                <template v-slot:append>
-                  <img
-                    width="24"
-                    height="24"
-                    src="https://cdn.vuetifyjs.com/images/logos/v-alt.svg"
-                    alt=""
-                  >
-                </template>
-              </v-text-field>
-            </v-col>
-            <v-col cols="12">
-              <v-text-field
-                v-model="user.password"
-                outlined
-                required
-                clearable
-                label="Password"
-                type="password"
-                :rules="[rules.required]"
-                
-              >
-                <template v-slot:append>
-                  <img
-                    width="24"
-                    height="24"
-                    src="https://cdn.vuetifyjs.com/images/logos/v-alt.svg"
-                    alt=""
-                  >
-                </template>
-              </v-text-field>
-            </v-col>
-            <v-col 
-              style="padding-left: 40%;
-              padding-top: 0px;"
-            >
-              <v-btn
-                color="blue"
-                @click="login"
-              >
-                Login
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-form>
-    </v-card>
+  <v-app>
+    <v-container fluid fill-height style="width: 400%;">
+      <v-layout align-center justify-center>
+        <v-flex xs12 sm8 md4>
+          <v-card class="elevation-12">
+            <v-form v-model="valid">
+              <v-col>
+                <v-text-field
+                  v-model="user.username"
+                  outlined
+                  clearable
+                  label="Username"
+                  type="text"
+                  :rules="[rules.required]"
+                  required
+                >
+                  <template v-slot:append>
+                    <img
+                      width="24"
+                      height="24"
+                      src="https://cdn.vuetifyjs.com/images/logos/v-alt.svg"
+                      alt=""
+                    >
+                  </template>
+                </v-text-field>
+              </v-col>
+              <v-col>
+                <v-text-field
+                  v-model="user.password"
+                  outlined
+                  required
+                  clearable
+                  label="Password"
+                  type="password"
+                  :rules="[rules.required]"
+                >
+                  <template v-slot:append>
+                    <img
+                      width="24"
+                      height="24"
+                      src="https://cdn.vuetifyjs.com/images/logos/v-alt.svg"
+                      alt=""
+                    >
+                  </template>
+                </v-text-field>
+              </v-col>
+              <v-col align="center">
+                  <v-btn
+                  color="blue"
+                  @click="login()"
+                >
+                  Login
+                </v-btn>
+              </v-col>
+            </v-form>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
   </v-app>
 </template>
 
@@ -94,7 +87,8 @@ export default {
           localStorage.removeItem('crstore-api-token')
           localStorage.setItem('crstore-api-token', response.token)
           this.$toast.success(`Login feito com sucesso!`);
-          return this.$router.push('/');
+          location.reload()
+          this.$router.push('../items');
         }
         else {
           return this.$toast.warning(`${response.message}`);

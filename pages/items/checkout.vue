@@ -162,7 +162,7 @@ export default {
   },
   methods: {
     async getAddresses () {
-      let response = await this.$api.$get('/addresses')
+      let response = await this.$api.get('/addresses')
       this.addresses = response.data
       console.log(response.data);
     },
@@ -190,20 +190,21 @@ export default {
           return this.$toast.warning(`Selecione um tipo de pagamento!`);
         }
         
-        let response = await this.$api.$post('/orders/persist', {
+        let response = await this.$api.post('/orders/persist', {
           totalPrice: this.totalPrice,
-          coupon: null,
+          coupon: {},
           idPaymentMethod: this.paymentMethod
         })
-        console.log(response.message);
+        this.$toast.success(`${response.message}`);
+        return this.$router.push('./');
       } catch (error) {
         return this.$toast.error(`Erro ao finalizar o pedido!`);
       }
     },
     async getItems () {
-      let items = await this.$api.$get('/users/cartItems')
+      let items = await this.$api.get('/users/cartItems')
       for (const item of items.data) {
-        let itemPrice = await this.$api.$get(`/items/price/${item.itemId}`)
+        let itemPrice = await this.$api.get(`/items/price/${item.itemId}`)
         item.price = itemPrice.data
         item.savedQtd = item.quantity
       }

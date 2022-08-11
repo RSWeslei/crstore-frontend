@@ -1,7 +1,6 @@
 <template>
   <v-app class="font"
     fluid
-    
   >
     <v-navigation-drawer 
       v-model="drawer"
@@ -10,6 +9,7 @@
       style="background-color: #12395d;"
     >
       <template v-slot:prepend>
+        <v-list>
           <v-list-item
             to="/"
             class="flex"
@@ -30,16 +30,17 @@
               CrStore
             </v-list-item-title>
           </v-list-item-content>
-        </v-list-item>
-        <v-list-item
-          style="font-family: 'Lucida Sans';
-            padding-left: 10%;
-            padding-top: 15%;
-            font-size: medium;
-          "
-          >
-            MENU
-        </v-list-item>
+          </v-list-item>
+          <v-list-item
+            style="font-family: 'Lucida Sans';
+              padding-left: 10%;
+              padding-top: 15%;
+              font-size: medium;
+            "
+            >
+              MENU
+          </v-list-item>
+        </v-list>
         <v-list
           dense
         >
@@ -65,20 +66,17 @@
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-spacer></v-spacer>
-      <v-btn icon
-        fab
-        to="/items/checkcart"
-      >
-        <v-icon>mdi-cart</v-icon>
-      </v-btn>
-      <v-btn text
-        fab
-        to="/users/login"
-      >Login</v-btn>
-      <v-btn text
-        fab
-        to="/users/signup"
-      >Signup</v-btn>
+        <v-btn
+          style="margin-left: 10px;"
+          v-for="btn in isLogged ? loggedBtns : defaultBtns"
+          :key="btn.title"
+          :text="btn.title ? true : false"
+          :icon="btn.icon ? true : false"
+          :to="btn.to"
+          fab
+        >
+          <v-icon>{{btn.icon ? btn.icon : btn.title}}</v-icon>
+        </v-btn>
     </v-app-bar>
     <v-main>
       <Nuxt/>
@@ -98,11 +96,50 @@
           },
           { title: 'About', icon: 'mdi-forum' },
         ],
-        drawer: false,
+        drawer: true,
+        isLogged: false,
+        loggedBtns: [
+          {
+            title: null,
+            to: "/items/checkcart",
+            type: 'icon',
+            icon: 'mdi-cart'
+          },
+          {
+            title: 'Logout',
+            to: "/users/login",
+            type: 'text',
+            icon: null
+          }
+        ],
+        defaultBtns: [
+          {
+            title: 'Entrar',
+            to: "/users/login",
+            type: 'text',
+            icon: null
+          },
+          {
+            title: 'Cadastro',
+            to: "/users/signup",
+            type: 'text',
+            icon: null
+          }
+        ]
       }
     },
+    async created () {
+      await this.validateLogin();
+    },
     methods: {
-      
+      async validateLogin () {
+        const token = localStorage.getItem('crstore-api-token') || '';
+        let response = await this.$api.get('/users/validate-token', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log(response.message);
+        this.isLogged = response.data
+      }
     }
   }
 </script> 

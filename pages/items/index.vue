@@ -10,7 +10,8 @@
           color="#12395d"
           style="margin: 10px;"
           width="300px"
-          height="500px" 
+          height="500px"
+          :disabled="item.stock <= 0"
         >
           <v-col align="center">
             <v-card-text 
@@ -45,10 +46,10 @@
               <v-col align="right">
                 <v-card-text
                   class="font"
-                  style="font-size: 20px;
-                  color: green"
+                  :style="`font-size: 20px;
+                  color: ${item.stock > 0 ? 'green' : 'red'}`"
                 >
-                  {{item.stock}} {{ item.stock > 0 ? 'Disponível' : 'Indisponível'}}
+                  {{ item.stock > 0 ? `${item.stock} Disponível` : 'Indisponível'}}
                 </v-card-text>
               </v-col>
             </v-row>
@@ -92,7 +93,7 @@ export default {
   methods: {
     async getItems (){
       try {
-        let response = await this.$api.$get(`/items`)
+        let response = await this.$api.get(`/items`)
         this.items = response.data
         this.items.forEach(item => {
           item.selectQtd = 0
@@ -106,7 +107,10 @@ export default {
         if (item.selectQtd <= 0){
           return this.$toast.error(`Quantidade invalida!`);
         }
-        let response = await this.$api.$post('/users/persistCart', {
+        if (item.stock - item.selectQtd < 0){
+          return this.$toast.error(`Quantidade não disponível!`);
+        }
+        let response = await this.$api.post('/users/persistCart', {
           itemId: item.id,
           quantity: Number(item.selectQtd),
           image: item.image,
