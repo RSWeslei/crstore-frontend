@@ -11,7 +11,6 @@
       <template v-slot:prepend>
         <v-list>
           <v-list-item
-            to="/"
             class="flex"
             style="padding-top: 10%;
               padding-left: 10%;"
@@ -24,8 +23,7 @@
               style="
                 font-family: 'Lucida Sans';
                 color: #EB392E;
-                font-size: x-large;
-              "
+                font-size: x-large;"
             >
               CrStore
             </v-list-item-title>
@@ -35,8 +33,7 @@
             style="font-family: 'Lucida Sans';
               padding-left: 10%;
               padding-top: 15%;
-              font-size: medium;
-            "
+              font-size: medium;"
             >
               MENU
           </v-list-item>
@@ -56,6 +53,17 @@
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item
+            v-if="isAdmin"
+            to="/users/adm/admin"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-account-tie-outline</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Administrator</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
       </template>
     </v-navigation-drawer>
@@ -67,7 +75,7 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-spacer></v-spacer>
         <v-btn
-          style="margin-left: 10px;"
+          style="margin-left: 20px;"
           v-for="btn in isLogged ? loggedBtns : defaultBtns"
           :key="btn.title"
           :text="btn.title ? true : false"
@@ -94,10 +102,10 @@
             icon: 'mdi-hand-okay',
             to: "/items"
           },
-          { title: 'About', icon: 'mdi-forum' },
         ],
         drawer: true,
         isLogged: false,
+        isAdmin: false,
         loggedBtns: [
           {
             title: null,
@@ -110,6 +118,12 @@
             to: "/users/login",
             type: 'text',
             icon: null
+          },
+          {
+            title: null,
+            to: "/users",
+            type: 'icon',
+            icon: 'mdi-account'
           }
         ],
         defaultBtns: [
@@ -133,12 +147,24 @@
     },
     methods: {
       async validateLogin () {
-        const token = localStorage.getItem('crstore-api-token') || '';
-        let response = await this.$api.get('/users/validate-token', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        console.log(response.message);
-        this.isLogged = response.data
+        try {
+          const token = localStorage.getItem('crstore-api-token') || '';
+          let response = await this.$api.get('/users/validate-token', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          this.isLogged = response.data.acceptLogin
+          console.log(this.username);
+          if (response.data?.role == 'admin'){
+            this.isAdmin = true
+          }
+          
+        } catch (error) {
+          this.$toast.error('Ocorrou um erro')
+        }
+      },
+      logout () {
+        localStorage.setItem('crstore-api-token', '')
+        location.reload()
       }
     }
   }

@@ -87,8 +87,8 @@ export default {
           localStorage.removeItem('crstore-api-token')
           localStorage.setItem('crstore-api-token', response.token)
           this.$toast.success(`Login feito com sucesso!`);
+          await this.$router.push('../items');
           location.reload()
-          this.$router.push('../items');
         }
         else {
           return this.$toast.warning(`${response.message}`);
